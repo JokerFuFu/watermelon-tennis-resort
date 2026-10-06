@@ -1,5 +1,5 @@
 import http from 'node:http'
-import {createReadStream} from 'node:fs'
+import {createReadStream,realpathSync} from 'node:fs'
 import {stat,realpath,access} from 'node:fs/promises'
 import {dirname,extname,resolve,sep} from 'node:path'
 import {fileURLToPath} from 'node:url'
@@ -42,4 +42,6 @@ async function main(){
   if(options.open)openBrowser(url)
   for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>server.close(()=>process.exit(0)))
 }
-if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(error=>{console.error(error?.code==='EADDRINUSE'?'端口已被占用。若原工作台已启动，请直接打开 http://127.0.0.1:5173/web；或用 --port 5180 启动独立服务。':error.message);process.exitCode=1})
+let isMain=false
+try{isMain=!!process.argv[1]&&realpathSync(process.argv[1])===fileURLToPath(import.meta.url)}catch{}
+if(isMain)main().catch(error=>{console.error(error?.code==='EADDRINUSE'?'端口已被占用。若原工作台已启动，请直接打开 http://127.0.0.1:5173/web；或用 --port 5180 启动独立服务。':error.message);process.exitCode=1})
