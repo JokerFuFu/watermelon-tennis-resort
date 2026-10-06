@@ -1,0 +1,15 @@
+export default function WatermelonMark({size=34,className=''}:{size?:number;className?:string}) {
+  return <svg className={`watermelon-mark ${className}`} width={size} height={size} viewBox="0 0 48 48" role="img" aria-label="西瓜标志">
+    <circle cx="24" cy="24" r="23" fill="#edf6e5"/>
+    <g transform="rotate(-12 24 24)">
+      <path d="M5 14H43A19 19 0 0 1 5 14Z" fill="#247749"/>
+      <path d="M8 14H40A16 16 0 0 1 8 14Z" fill="#d3edb5"/>
+      <path d="M11 14H37A13 13 0 0 1 11 14Z" fill="#ec6b72"/>
+      <path d="M12 15H36" stroke="#ffb4ac" strokeWidth="1.2"/>
+      <ellipse cx="17" cy="20" rx="1" ry="1.8" fill="#3d5140" transform="rotate(-27 17 20)"/>
+      <ellipse cx="24" cy="24" rx="1" ry="1.8" fill="#3d5140"/>
+      <ellipse cx="31" cy="20" rx="1" ry="1.8" fill="#3d5140" transform="rotate(27 31 20)"/>
+    </g>
+    <path d="M31 38c3-4 7-5 10-4-1 4-5 6-10 4Z" fill="#739e53"/>
+  </svg>
+}

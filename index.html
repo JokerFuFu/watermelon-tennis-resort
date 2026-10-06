@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#347b4d" />
+  <meta name="description" content="西瓜网球酒店设计工作台：交互式场地布局、客房规划与概念投资估算。" />
+  <title>西瓜网球度假酒店 · 设计工作台</title>
+  <style>
+    body { margin: 0; }
+    .startup-recovery-shell { box-sizing: border-box; min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #f5f7f0; color: #303d32; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+    .startup-recovery-card { box-sizing: border-box; width: min(100%, 460px); padding: 36px 30px; border: 1px solid #dfe7d7; border-radius: 16px; background: #fff; text-align: center; box-shadow: 0 12px 40px #263d2b0d; }
+    .startup-recovery-brand { margin: 0 0 24px; color: #52734b; font-size: 14px; }
+    .startup-recovery-card h1 { margin: 0; color: #304b34; font-size: 23px; line-height: 1.5; font-weight: 600; }
+    .startup-recovery-card p { margin: 15px 0 0; color: #737d70; font-size: 14px; line-height: 1.9; }
+    .startup-recovery-card button { display: inline-block; margin-top: 26px; border: 0; border-radius: 8px; padding: 12px 22px; background: #456743; color: #fff; font: inherit; font-size: 14px; cursor: pointer; }
+    .startup-recovery-card button:focus-visible { outline: 3px solid #8eae73; outline-offset: 4px; }
+    .startup-loading-spinner { display: block; width: 26px; height: 26px; margin: 24px auto 0; border: 3px solid #e5eddd; border-top-color: #52734b; border-radius: 50%; animation: startup-spin 1s linear infinite; }
+    @keyframes startup-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .startup-loading-spinner { animation: none; } }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <main class="startup-recovery-shell" data-startup-loading role="status">
+      <div class="startup-recovery-card">
+        <div class="startup-recovery-brand">🍉 西瓜网球度假酒店</div>
+        <h1>正在加载工作台…</h1>
+        <p>正在准备场地设计与方案数据，请稍候。</p>
+        <span class="startup-loading-spinner" aria-hidden="true"></span>
+      </div>
+    </main>
+  </div>
+  <script src="/startup-recovery.js"></script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

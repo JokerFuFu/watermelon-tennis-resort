@@ -1,0 +1,157 @@
+.survival-game-page { --island-sea: #2a8daf; --island-ink: #21444a; --island-border: #d4e3da; width: 100%; min-height: 100vh; padding: 24px clamp(16px, 3vw, 44px) 30px; background: #eef5ec; color: var(--island-ink); font-family: "PingFang SC", "Microsoft YaHei", sans-serif; box-sizing: border-box; }
+.survival-game-page *, .survival-game-page *::before, .survival-game-page *::after { box-sizing: border-box; }
+.survival-game-page h1, .survival-game-page h2, .survival-game-page p { margin: 0; }
+.survival-game-page h2 { font-size: 18px; font-weight: 700; line-height: 1.45; }
+.survival-game-page button, .survival-game-page input, .survival-game-page select { font: inherit; }
+.survival-game-page button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 9px 13px; border: 1px solid #b8cfc6; border-radius: 7px; background: #fffefa; color: #21444a; font-size: 13px; font-weight: 600; cursor: pointer; line-height: 1.4; }
+.survival-game-page button:hover:not(:disabled) { background: #e5f3ee; border-color: #68a99c; }
+.survival-game-page button:disabled { opacity: .48; cursor: not-allowed; }
+.survival-game-page button:focus-visible, .survival-game-page a:focus-visible, .survival-game-page input:focus-visible, .survival-game-page select:focus-visible, .survival-game-page summary:focus-visible { outline: 3px solid #eb746c; outline-offset: 3px; }
+.survival-game-page input, .survival-game-page select { min-height: 44px; min-width: 0; max-width: 100%; border: 1px solid #b8cfc6; border-radius: 6px; padding: 8px 10px; color: #21444a; background: white; font-size: 14px; }
+.survival-game-page .survival-primary { background: #285f51; border-color: #285f51; color: #fffcec; }
+.survival-game-page .survival-primary:hover:not(:disabled) { background: #1b4b3f; border-color: #1b4b3f; }
+.survival-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; max-width: 1420px; margin: 0 auto 20px; }
+.survival-brand { display: flex; align-items: center; gap: 12px; }
+.survival-brand-mark { width: 62px; height: 62px; background: #ddeac9; border-radius: 50%; display: grid; place-items: center; font-size: 35px; }
+.survival-brand div > span { display: block; font-size: 13px; color: #52726a; margin-bottom: 3px; }
+.survival-brand h1 { font-family: "Songti SC", "STSong", serif; font-size: clamp(28px, 3vw, 38px); letter-spacing: 2px; line-height: 1.2; font-weight: 800; }
+.survival-header-links { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; font-size: 13px; }
+.survival-header-links a { color: #236f89; text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; }
+.survival-save-state { color: #547168; }
+.survival-save-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; max-width: 1420px; margin: 0 auto; padding: 14px 0; border-top: 1px solid var(--island-border); border-bottom: 1px solid var(--island-border); }
+.survival-slots { display: flex; gap: 5px; }
+.survival-slots button[aria-pressed="true"] { background: #2a8daf; color: white; border-color: #2a8daf; }
+.survival-name-form { display: flex; gap: 5px; }
+.survival-name-form input { width: 135px; }
+.survival-file-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.survival-error { max-width: 1420px; margin: 14px auto; padding: 15px 18px; background: #fff0dc; border: 1px solid #d89d57; border-radius: 8px; }
+.survival-error p { margin: 5px 0 8px; overflow-wrap: anywhere; }
+.survival-error > span { font-size: 13px; margin-left: 10px; }
+.survival-status-bar { display: grid; grid-template-columns: repeat(4, 1fr) 1.3fr; gap: 26px; max-width: 1420px; margin: 20px auto 12px; }
+.survival-vital > div { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; margin-bottom: 6px; }
+.survival-vital b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.survival-vital small { font-size: 11px; font-weight: 400; color: #57746b; }
+.survival-vital progress { width: 100%; height: 9px; display: block; border: none; border-radius: 8px; overflow: hidden; background: #d8e4d7; }
+.survival-vital progress::-webkit-progress-bar { background: #d8e4d7; border-radius: 8px; }
+.survival-vital progress::-webkit-progress-value { background: currentColor; border-radius: 8px; }
+.survival-vital:nth-child(1) progress { color: #dc665f; }.survival-vital:nth-child(2) progress { color: #b59236; }.survival-vital:nth-child(3) progress { color: #2a8daf; }.survival-vital:nth-child(4) progress { color: #4e8150; }
+.survival-wallet { display: flex; justify-content: flex-end; align-items: center; gap: 17px; }
+.survival-wallet > span { display: flex; align-items: center; gap: 5px; font-size: 12px; white-space: nowrap; }
+.survival-wallet b { font-size: 23px; font-variant-numeric: tabular-nums; }
+.survival-wallet > span:first-child svg { color: #b28118; }.survival-wallet > span:last-child svg { color: #258a9c; }
+.survival-live-message { max-width: 1420px; margin: 0 auto 14px; padding: 10px 13px; min-height: 41px; border-left: 3px solid #eb746c; font-size: 13px; background: #fff9e9; line-height: 1.55; }
+.survival-ending { max-width: 1420px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 19px; background: #d8ecd5; border: 1px solid #83b38a; }
+.survival-ending p { margin-top: 5px; font-size: 14px; line-height: 1.6; }
+.survival-ending-warning { background: #fff0dc; border-color: #d7a366; }
+.survival-adventure-grid { max-width: 1420px; margin: auto; display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(292px, 1fr); gap: 24px; align-items: start; }
+.survival-map-section { min-width: 0; border: 1px solid #5c9e9e; border-radius: 13px; background: #e2f0e7; overflow: hidden; }
+.survival-map-heading { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #f5f9f0; }
+.survival-map-heading h2 { font-size: 21px; }
+.survival-map-heading div > span { display: block; font-size: 12px; margin-top: 5px; color: #527167; }
+.survival-location { max-width: 45%; text-align: right; line-height: 1.7; font-size: 12px; color: #527167; }
+.island-map-wrap { background: #2a8daf; padding: 9px; }
+.island-game-map { display: block; width: 100%; height: auto; border: 1px solid #a2dcd4; border-radius: 3px; touch-action: manipulation; }
+.island-game-map [data-game-tile]:not([data-terrain="sea"]) { cursor: pointer; }
+.island-game-map [data-game-tile]:hover > rect { stroke: #fffbe0; stroke-width: 2px; }
+.island-game-map [data-game-tile]:focus-visible > rect { stroke: #ffcf68; stroke-width: 4px; }
+.island-map-legend { display: flex; flex-wrap: wrap; gap: 7px 13px; padding: 12px 7px 4px; font-size: 11px; color: #eefbf3; }
+.island-map-legend > span { display: flex; align-items: center; gap: 4px; }
+.island-map-legend i { width: 9px; height: 9px; border-radius: 2px; border: 1px solid #ffffff88; }
+.survival-map-controls { padding: 16px; display: flex; align-items: center; gap: 18px; }
+.survival-direction-pad { flex-shrink: 0; width: 138px; height: 138px; display: grid; grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 44px); gap: 3px; }
+.survival-direction-pad button { width: 44px; height: 44px; padding: 0; border-radius: 9px; background: #faf7e8; }
+.survival-direction-up { grid-area: 1 / 2; }.survival-direction-left { grid-area: 2 / 1; }.survival-direction-right { grid-area: 2 / 3; }.survival-direction-down { grid-area: 3 / 2; }
+.survival-direction-center { grid-area: 2 / 2; display: grid; place-items: center; font-size: 26px; }
+.survival-actions { display: flex; flex-wrap: wrap; align-content: center; gap: 7px; }
+.survival-actions .survival-escape { background: #f7dd98; border-color: #c8a650; color: #654d1e; }
+.survival-guide { margin: 0 16px 17px; font-size: 13px; }
+.survival-guide summary, .survival-rules summary { cursor: pointer; min-height: 34px; display: list-item; padding: 8px 0; font-weight: 600; }
+.survival-guide ol { margin: 4px 0 0; padding-left: 20px; line-height: 1.85; color: #42685c; }
+.survival-pack-section { min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: 0 0 0 1px; }
+.survival-pack-section h2 { display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
+.survival-inventory { padding: 17px; border: 1px solid #cabd9d; background: #fff8e5; border-radius: 9px; }
+.survival-inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 13px; }
+.survival-inventory-grid > div { display: flex; align-items: center; gap: 6px; border-bottom: 1px dashed #dbcdaa; padding-bottom: 8px; font-size: 13px; min-width: 0; }
+.survival-inventory-grid > div > span:first-child { font-size: 21px; }
+.survival-inventory-grid b { margin-left: auto; font-size: 18px; }
+.survival-gear { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; font-size: 12px; color: #756f5e; }
+.survival-gear .ready { color: #285f51; font-weight: 700; }
+.survival-crafting { padding: 0 3px; }
+.survival-recipe { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--island-border); }
+.survival-recipe > div { flex: 1; min-width: 0; }
+.survival-recipe strong { font-size: 14px; }
+.survival-recipe p { font-size: 12px; margin-top: 4px; color: #426358; line-height: 1.6; }
+.survival-recipe small { font-size: 11px; display: block; margin-top: 3px; color: #647a70; line-height: 1.55; }
+.survival-recipe button { min-width: 67px; padding: 7px 8px; }
+.survival-quests { padding: 0 3px; }
+.survival-quests h2 small { margin-left: auto; color: #55786a; font-size: 12px; }
+.survival-quests ul { padding: 0; margin: 0; list-style: none; }
+.survival-quests li { display: flex; gap: 10px; margin-bottom: 12px; }
+.survival-quests li > span { font-size: 20px; color: #749586; line-height: 1.2; }.survival-quests li > span.done { color: #285f51; font-weight: 800; }
+.survival-quests strong { font-size: 13px; font-weight: 600; }.survival-quests li small { display: block; color: #57766a; font-size: 11px; line-height: 1.6; margin-top: 3px; }
+.survival-trading { max-width: 1420px; margin: 28px auto 0; padding-top: 24px; border-top: 1px solid #b4cdbf; display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(292px, 1fr); gap: 24px; }
+.survival-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.survival-section-heading label { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.survival-section-heading input { width: 75px; }
+.survival-shop > p, .survival-exchange > p { font-size: 13px; color: #526e63; line-height: 1.65; margin-top: 8px; }
+.survival-shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 15px; }
+.survival-shop-item { background: #fffefa; border: 1px solid var(--island-border); border-radius: 6px; padding: 12px; min-width: 0; }
+.survival-shop-item > div:first-child { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.survival-shop-item > div:first-child > span { font-size: 24px; }
+.survival-shop-item small { font-size: 11px; display: block; margin: 8px 0; color: #657b6e; line-height: 1.7; }
+.survival-shop-item > div:last-child { display: flex; gap: 5px; }
+.survival-shop-item button { flex: 1; min-width: 0; padding: 8px; }
+.survival-exchange { min-width: 0; padding: 18px; background: #e0eee8; border-radius: 11px; border: 1px solid #a6c7ba; }
+.survival-exchange h2 { display: flex; gap: 7px; align-items: center; }
+.survival-rate-display { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 17px 0; padding: 15px 0; border-top: 1px solid #bdcfc4; border-bottom: 1px solid #bdcfc4; text-align: center; }
+.survival-rate-display b { display: block; font-size: 30px; line-height: 1.2; color: #286a75; font-weight: 700; }.survival-rate-display div > span { display: block; font-size: 12px; margin-top: 4px; }.survival-rate-display > span { color: #6b8f7e; font-size: 24px; }
+.survival-exchange-quantity { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; }.survival-exchange-quantity input { width: 80px; }
+.survival-exchange-buttons { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }.survival-exchange-buttons button { flex: 1; }
+.survival-exchange .survival-supply { width: 100%; border-color: #64a8b5; background: #d4f0ec; margin-bottom: 7px; }
+.survival-exchange > small { display: block; font-size: 11px; line-height: 1.6; color: #536e62; }
+.survival-rules { margin-top: 14px; border-top: 1px solid #bad1c5; font-size: 12px; }.survival-rules p { line-height: 1.6; margin-bottom: 10px; }.survival-rules form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.survival-rules label { min-width: 0; }.survival-rules input { width: 100%; margin-top: 5px; }.survival-rules button { grid-column: span 2; }
+.survival-new-adventure { max-width: 1420px; margin: 25px auto 0; border-top: 1px solid #b4cdbf; padding: 23px 0; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }.survival-new-adventure > div { flex: 1; min-width: 240px; }.survival-new-adventure p { font-size: 12px; line-height: 1.7; color: #597467; margin-top: 5px; }.survival-new-adventure label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; }.survival-new-adventure select { min-width: 135px; }
+.island-map-gallery { max-width: 1420px; margin: 0 auto 24px; padding: 18px; border: 1px solid #b4cdbf; border-radius: 10px; background: #f7faef; min-width: 0; }
+.island-gallery-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.island-gallery-heading > div { min-width: 0; }.island-gallery-heading strong { font-size: 15px; }.island-gallery-heading p { margin-top: 5px; color: #527167; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.island-gallery-heading > button { flex-shrink: 0; }.island-gallery-heading > button > span { color: #527167; font-size: 11px; font-weight: 400; }
+.island-gallery-help { margin: 16px 0 12px !important; font-size: 12px; line-height: 1.75; color: #527167; }
+.island-gallery-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.survival-game-page .island-map-card { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; text-align: left; min-width: 0; padding: 10px; gap: 9px; border-color: #c5d6c9; }
+.survival-game-page .island-map-card[aria-pressed="true"] { border: 2px solid #285f51; padding: 9px; background: #e5f3dd; }
+.island-map-thumbnail { display: block; width: 100%; height: auto; border: 1px solid #89b6b3; border-radius: 4px; image-rendering: pixelated; }
+.island-map-card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 5px; min-width: 0; }.island-map-card-title strong { font-size: 14px; overflow-wrap: anywhere; }.island-map-card-title > span { font-size: 10px; color: #285f51; white-space: nowrap; }
+.island-map-card-description { font-size: 12px; font-weight: 400; line-height: 1.7; color: #527167; overflow-wrap: anywhere; }
+.survival-footer { max-width: 1420px; margin: auto; border-top: 1px solid var(--island-border); padding-top: 16px; display: flex; justify-content: space-between; gap: 16px; font-size: 11px; color: #658174; line-height: 1.8; }
+.survival-dialog-backdrop { position: fixed; inset: 0; z-index: 2000; padding: 20px; display: flex; align-items: center; justify-content: center; background: #1b363ba6; }
+.survival-dialog-backdrop > section { background: #f9f9ec; border-radius: 12px; width: 460px; max-width: 100%; padding: 26px; box-shadow: 0 20px 65px #17363b55; }
+.survival-dialog-backdrop p { margin: 12px 0 20px; font-size: 14px; line-height: 1.8; }.survival-dialog-backdrop section > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+@media (max-width: 1100px) {
+  .survival-game-page { padding: 20px; }
+  .survival-status-bar { gap: 16px; grid-template-columns: repeat(4, 1fr); }
+  .survival-wallet { grid-column: 1 / -1; justify-content: flex-start; margin-top: -2px; }
+  .survival-file-buttons { margin-left: 0; }
+  .survival-adventure-grid, .survival-trading { gap: 18px; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); }
+  .survival-map-controls { flex-direction: column; gap: 13px; }
+  .survival-actions { justify-content: center; }
+  .survival-shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .island-map-gallery { padding: 12px; }.island-gallery-heading { align-items: stretch; flex-direction: column; gap: 10px; }.island-gallery-heading > button { align-self: flex-start; }.island-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }.survival-game-page .island-map-card { padding: 7px; gap: 7px; }.survival-game-page .island-map-card[aria-pressed="true"] { padding: 6px; }.island-map-card-title { align-items: flex-start; flex-wrap: wrap; }.island-map-card-title strong { font-size: 13px; }.island-map-card-description { font-size: 11px; }
+  .survival-game-page { padding: 16px 13px 22px; }
+  .survival-header { align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .survival-brand { gap: 8px; }.survival-brand-mark { width: 45px; height: 45px; font-size: 28px; }.survival-brand h1 { font-size: 27px; }.survival-brand div > span { font-size: 11px; }
+  .survival-header-links { gap: 5px; max-width: 47%; font-size: 11px; }.survival-header-links button { min-height: 36px; padding: 6px 9px; font-size: 11px; }.survival-header-links a { min-height: 32px; }.survival-save-state { width: 100%; text-align: right; }
+  .survival-save-bar { gap: 10px; padding: 11px 0; }.survival-slots { width: 100%; }.survival-slots button { flex: 1; }.survival-name-form { width: 100%; }.survival-name-form input { flex: 1; width: auto; }.survival-file-buttons { width: 100%; gap: 5px; }.survival-file-buttons button { font-size: 11px; flex: 1; padding: 8px 5px; gap: 3px; }
+  .survival-status-bar { grid-template-columns: repeat(2, 1fr); gap: 13px 18px; margin-top: 17px; }.survival-wallet { justify-content: space-between; gap: 10px; }.survival-wallet b { font-size: 22px; }
+  .survival-live-message { font-size: 12px; min-height: 48px; padding: 10px; }
+  .survival-adventure-grid, .survival-trading { display: flex; flex-direction: column; gap: 24px; }.survival-map-section, .survival-pack-section, .survival-shop, .survival-exchange { width: 100%; }
+  .survival-map-heading { padding: 12px; align-items: flex-start; }.survival-map-heading h2 { font-size: 18px; }.survival-map-heading div > span { font-size: 10px; }.survival-location { font-size: 10px; max-width: 42%; }
+  .island-map-wrap { padding: 5px; }.island-map-legend { gap: 6px 10px; font-size: 10px; padding: 10px 4px 5px; }
+  .survival-map-controls { padding: 13px 10px; }.survival-actions { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }.survival-actions button { padding: 8px 5px; font-size: 11px; }.survival-actions .survival-primary { grid-column: span 2; }.survival-actions .survival-escape { grid-column: span 2; }
+  .survival-guide { margin: 0 12px 12px; font-size: 12px; }.survival-inventory-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }.survival-inventory-grid > div { flex-wrap: wrap; font-size: 12px; }.survival-inventory-grid b { font-size: 17px; }
+  .survival-recipe { gap: 15px; }.survival-pack-section { gap: 22px; }.survival-quests li { margin-bottom: 13px; }.survival-quests li small { font-size: 12px; }
+  .survival-trading { margin-top: 23px; }.survival-shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }.survival-shop-item { padding: 10px; }.survival-shop-item button { font-size: 12px; }
+  .survival-new-adventure { align-items: end; gap: 10px; }.survival-new-adventure > div { flex-basis: 100%; }.survival-new-adventure label { flex: 1; }.survival-new-adventure > button { flex: 1; }.survival-new-adventure select { width: 100%; min-width: 0; }.survival-footer { flex-direction: column; gap: 4px; }
+  .survival-ending { padding: 15px; gap: 12px; flex-wrap: wrap; }.survival-ending p { font-size: 12px; }.survival-dialog-backdrop > section { padding: 21px; }.survival-dialog-backdrop section > div button { flex: 1; }
+}

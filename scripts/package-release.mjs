@@ -1,0 +1,19 @@
+import {readdir,readFile,writeFile,mkdir,stat} from 'node:fs/promises'
+import {dirname,join,resolve} from 'node:path'
+import {fileURLToPath} from 'node:url'
+import {deflateRawSync} from 'node:zlib'
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),pkg=JSON.parse(await readFile(join(root,'package.json'),'utf8'))
+const files=[]
+async function walk(dir,prefix){for(const entry of (await readdir(dir,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){if(entry.isSymbolicLink())throw Error('运行包不接受符号链接');const path=join(dir,entry.name),name=prefix+'/'+entry.name;if(entry.isDirectory())await walk(path,name);else files.push({name,bytes:await readFile(path),mode:0o100644})}}
+try{await stat(join(root,'dist','index.html'))}catch{throw Error('请先运行 npm run build，再打包。')}
+await walk(join(root,'dist'),'dist');files.push({name:'THIRD_PARTY_NOTICES.txt',bytes:await readFile(join(root,'THIRD_PARTY_NOTICES.txt')),mode:0o100644});files.push({name:'scripts/server.mjs',bytes:await readFile(join(root,'scripts','server.mjs')),mode:0o100644})
+files.push({name:'开始使用.txt',bytes:Buffer.from('西瓜网球度假酒店 '+pkg.version+'\n\n1. 安装 Node.js 22 或更高版本：https://nodejs.org/\n2. 完整解压本运行包（不能直接在压缩包内打开）。\n3. Windows 双击启动酒店.bat；Mac 双击启动酒店.command。\n4. 保持终端窗口运行；Ctrl+C停止。默认仅本机 http://127.0.0.1:5173/web 可用。\n\n此包不需要npm安装依赖。方案和游戏存档只在浏览器中，不随代码上传或跨电脑同步。跨电脑前从原浏览器导出方案和游戏存档，在新电脑导入。\n源码：https://github.com/JokerFuFu/watermelon-tennis-resort\n'),mode:0o100644})
+files.push({name:'启动酒店.command',bytes:Buffer.from('#!/bin/bash\ncd "$(dirname "$0")" || exit 1\nexport PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"\nif ! command -v node >/dev/null 2>&1; then\n  echo "请先安装 Node.js 22 或更高版本：https://nodejs.org/"\n  read -r -p "按回车关闭" _answer\n  exit 1\nfi\nnode scripts/server.mjs --open\n'),mode:0o100755})
+files.push({name:'启动酒店.bat',bytes:Buffer.from('@echo off\r\nchcp 65001 >nul\r\ncd /d "%~dp0"\r\nwhere node >nul 2>nul\r\nif errorlevel 1 (\r\n  echo 请先安装 Node.js 22 或更高版本：https://nodejs.org/\r\n  pause\r\n  exit /b 1\r\n)\r\nnode scripts\\server.mjs --open\r\nif errorlevel 1 pause\r\n'),mode:0o100644})
+const table=Array.from({length:256},(_,n)=>{for(let i=0;i<8;i++)n=n&1?0xedb88320^(n>>>1):n>>>1;return n>>>0})
+function crc(bytes){let n=0xffffffff;for(const b of bytes)n=table[(n^b)&255]^(n>>>8);return (n^0xffffffff)>>>0}
+// Standard ZIP with UTF-8 names, deflate, CRC32 and Unix executable mode for the Mac launcher.
+const parts=[],central=[];let offset=0
+for(const file of files){const name=Buffer.from(file.name),data=deflateRawSync(file.bytes),checksum=crc(file.bytes),head=Buffer.alloc(30);head.writeUInt32LE(0x04034b50,0);head.writeUInt16LE(20,4);head.writeUInt16LE(0x800,6);head.writeUInt16LE(8,8);head.writeUInt16LE(33,12);head.writeUInt32LE(checksum,14);head.writeUInt32LE(data.length,18);head.writeUInt32LE(file.bytes.length,22);head.writeUInt16LE(name.length,26);parts.push(head,name,data);const record=Buffer.alloc(46);record.writeUInt32LE(0x02014b50,0);record.writeUInt16LE(0x314,4);record.writeUInt16LE(20,6);record.writeUInt16LE(0x800,8);record.writeUInt16LE(8,10);record.writeUInt16LE(33,14);record.writeUInt32LE(checksum,16);record.writeUInt32LE(data.length,20);record.writeUInt32LE(file.bytes.length,24);record.writeUInt16LE(name.length,28);record.writeUInt32LE((file.mode<<16)>>>0,38);record.writeUInt32LE(offset,42);central.push(record,name);offset+=head.length+name.length+data.length}
+const directory=Buffer.concat(central),end=Buffer.alloc(22);end.writeUInt32LE(0x06054b50,0);end.writeUInt16LE(files.length,8);end.writeUInt16LE(files.length,10);end.writeUInt32LE(directory.length,12);end.writeUInt32LE(offset,16);parts.push(directory,end)
+await mkdir(join(root,'release'),{recursive:true});const output=join(root,'release',`watermelon-tennis-resort-${pkg.version}-web.zip`);await writeFile(output,Buffer.concat(parts));console.log(`已生成 Windows / Mac 共用运行包：${output}\n仅包含网页、服务与启动器，不包含用户方案、存档或开发依赖。`)

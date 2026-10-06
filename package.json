@@ -1,0 +1,59 @@
+{
+  "name": "courtside-studio",
+  "version": "6.3.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsx --test src/model.test.ts src/layout.test.ts src/pricing.test.ts src/area.test.ts src/areaExport.test.ts src/projectChecks.test.ts src/projectReport.test.ts src/operating.test.ts src/operatingIntegration.test.ts src/materials.test.ts src/materialShapes.test.tsx src/materialIntegration.test.ts src/earnings.test.ts src/earningsIntegration.test.ts src/version3.test.ts src/monthlyPlan.test.ts src/monthlyPlanIntegration.test.ts src/survival.test.ts src/survivalStorage.test.ts src/islandMaps.test.ts src/facilitySelection.test.ts src/hotelExpansion.test.ts src/arcade/puzzles.test.ts src/arcade/boards.test.ts src/arcade/chess.test.ts src/arcade/xiangqi.test.ts src/arcade/cards.test.ts src/arcade/arcadeStorage.test.ts src/layoutMeasurements.test.ts src/facilityTemplates.test.ts",
+    "test:factors": "tsx --test src/factors/engine.test.ts",
+    "test:factors:browser": "node scripts/verify-factor-game.mjs",
+    "test:browser": "node scripts/verify-browser.mjs",
+    "test:facilities": "node scripts/verify-facility-library.mjs",
+    "test:workspace": "node scripts/verify-workspace-upgrade.mjs",
+    "test:entertainment": "node scripts/verify-entertainment.mjs",
+    "test:pricing": "node scripts/verify-pricing.mjs",
+    "test:area": "node scripts/verify-area.mjs",
+    "test:number": "node scripts/verify-number-inputs.mjs",
+    "test:polish": "node scripts/verify-polish.mjs",
+    "test:startup": "node scripts/verify-startup.mjs",
+    "test:leisure": "node scripts/verify-leisure.mjs",
+    "test:auction": "node scripts/verify-auction.mjs",
+    "test:operating": "node scripts/verify-operating.mjs",
+    "test:materials": "node scripts/verify-materials.mjs",
+    "test:earnings": "node scripts/verify-earnings.mjs",
+    "test:v3": "node scripts/verify-version-3.mjs",
+    "test:monthly": "node scripts/verify-monthly-plan.mjs",
+    "test:survival": "node scripts/verify-survival-game.mjs",
+    "test:maps": "node scripts/verify-island-expansion.mjs",
+    "test:design": "node scripts/verify-hotel-design-42.mjs",
+    "test:expansion": "node scripts/verify-hotel-expansion-50.mjs",
+    "test:arcade": "node scripts/verify-arcade-60.mjs",
+    "test:measurements": "node scripts/verify-layout-measurements-61.mjs",
+    "test:templates": "node scripts/verify-facility-templates-62.mjs",
+    "test:ten-updates": "node scripts/verify-ten-updates-63.mjs",
+    "start": "node scripts/server.mjs",
+    "test:server": "node --test scripts/server.test.mjs",
+    "package": "node scripts/package-release.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.50.0",
+    "tsx": "^4.19.2",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

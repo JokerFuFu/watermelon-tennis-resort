@@ -1,0 +1,118 @@
+import assert from 'node:assert/strict'
+import { chromium } from 'playwright'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { tsImport } from 'tsx/esm/api'
+const p=await tsImport('../src/arcade/puzzles.ts',import.meta.url),b=await tsImport('../src/arcade/boards.ts',import.meta.url),c=await tsImport('../src/arcade/cards.ts',import.meta.url)
+// QA inventory: lobby discovery; 14 real moves + envelope/reload/isolation; puzzle
+// rules/wins; board turns/rejections/wins; cards human/bot/pass/solitaire transfer;
+// import rejection/corrupt protection; navigation cleanup; 390px geometry; startup.
+// All contexts are owned by this script. Never attaches to user/native browsers.
+const ids=['sudoku','minesweeper','2048','fifteen','lights','gomoku','xiangqi','go','chess','reversi','tictactoe','doudizhu','guandan','solitaire']
+const protectedKeys=['courtside-projects-v1','courtside-active-v1','courtside-survival-active-slot-v1',...['1','2','3'].map(n=>`courtside-survival-slot-${n}-v1`),...['1','2','3'].map(n=>`courtside-survival-backup-${n}-v1`)]
+const baseline=Object.fromEntries(protectedKeys.map((key,i)=>[key,JSON.stringify({isolationFixture:true,key,index:i})]))
+const origin=new URL(process.env.COURTSIDE_URL||'http://127.0.0.1:5173/web').origin
+const executablePath=process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||(existsSync('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':undefined)
+mkdirSync('test-results',{recursive:true})
+const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})}),context=await browser.newContext({viewport:{width:1100,height:900},acceptDownloads:true})
+await context.addInitScript(({baseline,keys})=>{
+ const get=Storage.prototype.getItem,set=Storage.prototype.setItem;window.__rawRead=key=>get.call(localStorage,key);window.__protectedOps=[]
+ if(!get.call(localStorage,'arcade-ui-fixture-seeded')){for(const [k,v]of Object.entries(baseline))set.call(localStorage,k,v);set.call(localStorage,'arcade-ui-fixture-seeded','1')}
+ for(const method of ['getItem','setItem','removeItem']){const original=Storage.prototype[method];Storage.prototype[method]=function(key,...rest){if(keys.includes(key))window.__protectedOps.push({method,key});return original.call(this,key,...rest)}}
+},{baseline,keys:protectedKeys})
+const page=await context.newPage();page.setDefaultTimeout(10000)
+const errors=[],passed=[],failures=[],allOps=[];page.on('pageerror',e=>errors.push(e.message))
+let current='setup'
+const key=id=>`courtside-arcade-${id}-v1`
+const button=name=>page.getByRole('button',{name,exact:true})
+const raw=id=>page.evaluate(k=>localStorage.getItem(k),key(id))
+const state=async id=>JSON.parse(await raw(id)).state
+async function snapshot(){return page.evaluate(()=>Object.fromEntries(Object.keys(localStorage).filter(k=>k.startsWith('courtside-arcade-')&&!k.endsWith('-backup')).map(k=>[k,localStorage.getItem(k)])))}
+async function isolation(){const ops=await page.evaluate(()=>window.__protectedOps);allOps.push(...ops);assert.deepEqual(ops,[],'new games must not read/write hotel or survival keys');assert.deepEqual(await page.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,window.__rawRead(k)])),protectedKeys),baseline);await page.evaluate(()=>window.__protectedOps=[])}
+async function ready(id){await page.locator(`[data-arcade-game="${id}"]`).waitFor();if(id!=='lobby')await button('保存游戏').waitFor();await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))}
+async function go(id){await isolation();await page.goto(`${origin}/play?game=${id}`);await ready(ids.includes(id)||id==='lobby'?id:'lobby');await isolation()}
+async function check(name,run){current=name;await run();passed.push(name);console.log('PASS '+name)}
+async function fixture(id,s){const env={version:1,game:id,updatedAt:'2026-10-04T00:00:00.000Z',state:s};await page.locator('input[aria-label="选择小游戏存档文件"]').setInputFiles({name:`${id}-fixture.json`,mimeType:'application/json',buffer:Buffer.from(JSON.stringify(env))});await page.waitForFunction(({k,s})=>{const raw=localStorage.getItem(k);return raw&&JSON.stringify(JSON.parse(raw).state)===JSON.stringify(s)},{k:key(id),s});await isolation()}
+async function persist(id){await button('保存游戏').click();const saved=await raw(id),env=JSON.parse(saved);assert.equal(env.game,id);assert.equal(env.version,1);assert.ok(Number.isFinite(Date.parse(env.updatedAt)));for(let i=0;i<2;i++){await isolation();await page.reload();await ready(id);assert.equal(await raw(id),saved);await isolation()}return env.state}
+async function fit(){const g=await page.evaluate(()=>({width:innerWidth,body:document.body.scrollWidth,doc:document.documentElement.scrollWidth}));assert.ok(g.body<=g.width+1&&g.doc<=g.width+1,JSON.stringify(g))}
+async function boardClick(i){await page.locator('.stone-grid button,.piece-grid button').nth(i).click()}
+async function changed(id,act){const old=await raw(id);await act();await page.waitForFunction(({k,old})=>localStorage.getItem(k)!==old,{k:key(id),old});return state(id)}
+try{
+ await page.goto(`${origin}/play?game=lobby`);await ready('lobby')
+ await check('01 lobby has 15 genuine entries, categories/search and healthy twelve seconds',async()=>{
+  assert.equal(await page.locator('[data-game-card]').count(),15);for(const [name,count]of [['方格益智',5],['经典棋类',6],['常玩牌类',3],['探索冒险',1],['全部游戏',15]]){await button(name).click();assert.equal(await page.locator('[data-game-card]').count(),count)}
+  await page.getByRole('textbox',{name:'搜索游戏'}).fill('象棋');assert.equal(await page.locator('[data-game-card]').count(),2);await page.getByRole('textbox',{name:'搜索游戏'}).fill('不存在的游戏');assert.equal(await page.locator('[data-game-card]').count(),0);await page.getByRole('textbox',{name:'搜索游戏'}).fill('');await fit();await page.screenshot({path:'test-results/arcade-60-lobby-desktop.png',fullPage:true});await page.waitForTimeout(12000);assert.equal(await page.locator('.arcade-lobby').count(),1);assert.equal(await page.locator('.startup-recovery').count(),0);await isolation()
+ })
+ for(const [index,id]of ids.entries())await check(`${String(index+2).padStart(2,'0')} ${id} real action, own envelope and two reloads preserve all other games`,async()=>{
+  const others=await snapshot();await go(id);const initial=await state(id)
+  if(id==='sudoku'){const i=initial.puzzle.indexOf(0);await page.locator('.sudoku-grid button').nth(i).click();await button('笔记：关').click();await page.locator('.puzzle-keypad button').nth(0).click();assert.equal((await state(id)).notes[i],1)}
+  else if(id==='minesweeper'){await page.locator('.mines-grid button').nth(40).click();const s=await state(id);assert.equal(s.first,40);assert.equal(p.mineNumber(s,40),0);assert.ok(s.open[40]);const closed=s.open.findIndex(v=>!v);await page.locator('.mines-grid button').nth(closed).click({button:'right'});assert.equal((await state(id)).flags[closed],true)}
+  else if(id==='2048'){await page.keyboard.press('ArrowDown');if((await state(id)).moves===initial.moves)await page.keyboard.press('ArrowLeft');assert.ok((await state(id)).moves>initial.moves)}
+  else if(id==='fifteen'){const empty=initial.board.indexOf(0),adj=initial.board.findIndex((_,i)=>Math.abs(Math.floor(i/4)-Math.floor(empty/4))+Math.abs(i%4-empty%4)===1);await page.locator('.fifteen-grid button').nth(adj).click();assert.equal((await state(id)).board[empty],initial.board[adj])}
+  else if(id==='lights'){await page.locator('.lights-grid button').nth(12).click();assert.equal((await state(id)).moves,1)}
+  else if(['gomoku','go','tictactoe'].includes(id)){await boardClick(0);assert.equal((await state(id)).board[0],1);assert.equal((await state(id)).turn,2);const before=await raw(id);await boardClick(0);assert.equal(await raw(id),before)}
+  else if(id==='reversi'){const move=b.stoneMoves(initial)[0];await boardClick(move);const s=await state(id);assert.ok(s.board.filter(n=>n===1).length>2);assert.equal(s.turn,2)}
+  else if(id==='xiangqi'){await boardClick(54);await boardClick(45);assert.equal((await state(id)).board[45].kind,'p');assert.equal((await state(id)).turn,'black');await page.screenshot({path:'test-results/arcade-60-xiangqi-desktop.png',fullPage:true})}
+  else if(id==='chess'){await boardClick(52);await boardClick(36);assert.equal((await state(id)).board[36].kind,'p');assert.equal((await state(id)).turn,'black');const old=await raw(id);await boardClick(4);await boardClick(28);assert.equal(await raw(id),old);assert.match(await page.getByRole('alert').last().textContent(),/不合法/)}
+  else if(id==='doudizhu'||id==='guandan'){await fixture(id,c.createCards(id,42));if(id==='doudizhu')await button('我当地主').click();await button('提示').click();assert.ok(await page.locator('.arc-my-hand .selected').count()>0);await button('清空选择').click();await page.locator('.arc-my-hand button').first().click();const selected=await page.locator('.arc-my-hand .selected').count();assert.equal(selected,1);const n=(await state(id)).hands[0].length;await page.getByRole('button',{name:/^出牌（/}).click();const s=await state(id);assert.ok(s.hands[0].length<n);assert.ok(s.played.length>selected,'computer seats progressed after human play');assert.equal(s.turn,0);await page.screenshot({path:`test-results/arcade-60-${id}-desktop.png`,fullPage:true})}
+  else {await button('翻牌或回收废牌').click();assert.equal((await state(id)).stock.length,initial.stock.length-1);assert.equal((await state(id)).waste.length,1)}
+  assert.notDeepEqual(await state(id),initial);await persist(id);for(const[k,v]of Object.entries(others))if(k!==key(id))assert.equal((await snapshot())[k],v,`${id} must not change ${k}`);await fit()
+ })
+ await check('16 sudoku fixed cells reject edits, conflict and correct one-cell completion',async()=>{
+  await go('sudoku');const s=p.createSudoku('hard',82),sol=p.sudokuSolutions(s.puzzle,1).solution;await fixture('sudoku',s);const given=s.puzzle.findIndex(Boolean);await page.locator('.sudoku-grid button').nth(given).click();await page.keyboard.press('1');assert.deepEqual(await state('sudoku'),s)
+  const empty=s.puzzle.indexOf(0),wrong=sol[empty]%9+1;await page.locator('.sudoku-grid button').nth(empty).click();await page.keyboard.press(String(wrong));assert.equal((await state('sudoku')).board[empty],wrong)
+  const near={...s,board:[...sol],notes:Array(81).fill(0)};near.board[empty]=0;await fixture('sudoku',near);await page.locator('.sudoku-grid button').nth(empty).click();await page.keyboard.press(String(sol[empty]));assert.ok(p.sudokuWon(await state('sudoku')));assert.match(await page.getByRole('status').first().textContent(),/全部正确/)
+ })
+ await check('17 mines 16x16 zero start, flag mode, loss and cleared-board win',async()=>{
+  await go('minesweeper');await page.getByRole('combobox').selectOption('16');await page.locator('.mines-grid button').nth(136).click();let s=await state('minesweeper');assert.equal(s.size,16);assert.equal(p.mineNumber(s,136),0);const mine=s.mines.findIndex(Boolean);await button('操作：翻开').click();await page.locator('.mines-grid button').nth(mine).click();assert.ok((await state('minesweeper')).flags[mine]);await page.locator('.mines-grid button').nth(mine).click();await button('操作：插旗').click();await page.locator('.mines-grid button').nth(mine).click();assert.equal(p.minesStatus(await state('minesweeper')),'lost')
+  s=p.minesReveal(p.createMines(9,25),40);const last=s.mines.findIndex((v,i)=>!v&&!s.open[i]);s={...s,open:s.mines.map((v,i)=>!v&&i!==last)};await fixture('minesweeper',s);await page.locator('.mines-grid button').nth(last).click();assert.equal(p.minesStatus(await state('minesweeper')),'won')
+ })
+ await check('18 2048 golden single-merge score, no-op and win continue',async()=>{
+  await go('2048');await fixture('2048',{seed:42,board:[2,2,2,2,...Array(12).fill(0)],score:0,moves:0,won:false});await page.keyboard.press('ArrowLeft');let s=await state('2048');assert.equal(s.score,8);assert.deepEqual(s.board.slice(0,2),[4,4]);assert.equal(s.board.filter(Boolean).length,3)
+  await fixture('2048',{seed:42,board:[1024,1024,...Array(14).fill(0)],score:0,moves:0,won:false});await page.keyboard.press('ArrowLeft');assert.equal((await state('2048')).won,true);await page.keyboard.press('ArrowDown');assert.equal((await state('2048')).moves,2)
+  const stopped={seed:42,board:[2,4,...Array(14).fill(0)],score:0,moves:0,won:false};await fixture('2048',stopped);const before=await raw('2048');await page.keyboard.press('ArrowLeft');assert.equal(await raw('2048'),before)
+ })
+ await check('19 fifteen rejects non-neighbor and completes; lights one-cross completes; ten rapid moves atomic',async()=>{
+  await go('fifteen');const s={seed:1,board:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,0,15],moves:0,elapsedMs:0};await fixture('fifteen',s);const before=await raw('fifteen');await page.locator('.fifteen-grid button').nth(0).click();assert.equal(await raw('fifteen'),before);await page.locator('.fifteen-grid button').nth(15).click();assert.ok(p.fifteenWon(await state('fifteen')))
+  await go('lights');const board=Array(25).fill(0);p.lightNeighbours(12).forEach(i=>board[i]=1);await fixture('lights',{seed:1,board,moves:0});await page.locator('.lights-grid button').nth(12).click();assert.ok(p.lightsWon(await state('lights')))
+  const active=p.createLights(128);await fixture('lights',active);for(let i=0;i<10;i++)await page.locator('.lights-grid button').nth(0).click();assert.equal((await state('lights')).moves,10);assert.deepEqual((await state('lights')).board,active.board)
+ })
+ await check('20 five-in-row and tic-tac-toe actual UI wins; reversi illegal click and pass rejects',async()=>{
+  for(const [id,moves]of [['gomoku',[0,15,1,16,2,17,3,18,4]],['tictactoe',[0,3,1,4,2]]]){await go(id);await fixture(id,b.createStoneGame(id));for(const i of moves)await boardClick(i);assert.ok((await state(id)).finished);assert.match(await page.getByRole('status').first().textContent(),/获胜/)}
+  await go('reversi');await fixture('reversi',b.createStoneGame('reversi'));const before=await raw('reversi');await boardClick(0);assert.equal(await raw('reversi'),before);await button('停一手').click();assert.equal(await raw('reversi'),before);assert.match(await page.getByRole('alert').last().textContent(),/合法/)
+ })
+ await check('21 solitaire real foundation move and shedding pass selection',async()=>{
+  await go('solitaire');const deck=c.deck(1,false),ace=deck.find(card=>card.rank===14&&card.suit==='S'),rest=deck.filter(card=>card!==ace),s={columns:[[],[],[],[],[],[],[]],faceUp:[],stock:rest,waste:[ace],foundations:[[],[],[],[]],moves:0,message:'独立可复核移动局面'};c.validateSolitaire(s);await fixture('solitaire',s);await button(c.cardLabel(ace)).click();await button('放到收牌区 1').click();assert.equal((await state('solitaire')).foundations[0][0].id,ace.id);assert.equal((await state('solitaire')).waste.length,0);assert.match(await page.locator('.arc-cards-game').textContent(),/移动成功/)
+  for(const id of ['doudizhu','guandan']){await go(id);let s=c.createCards(id,42);if(id==='doudizhu')s=c.chooseLandlord(s,0);s=c.advanceBots(c.playCards(s,[s.hands[0][0].id]));c.validateCards(s,id);await fixture(id,s);await page.locator('.arc-my-hand button').first().click();assert.equal(await page.locator('.arc-my-hand .selected').count(),1);await button('清空选择').click();assert.equal(await page.locator('.arc-my-hand .selected').count(),0);assert.ok(s.last);const n=s.hands[0].length;await button('不出').click();assert.equal((await state(id)).hands[0].length,n);assert.equal((await state(id)).turn,0)}
+ })
+ await check('22 browser back/forward, unknown fallback, lobby keyboard cleanup and saved isolation',async()=>{
+  await go('lobby');await page.locator('[data-game-card="2048"] button').click();await ready('2048');const before=await raw('2048');await button('返回游戏大厅').click();await ready('lobby');await page.keyboard.press('ArrowDown');await page.keyboard.press('1');assert.equal(await raw('2048'),before);await page.goBack();await ready('2048');await page.goForward();await ready('lobby');await go('invalid-game-id');await ready('lobby');assert.equal(await page.locator('[data-game-card]').count(),15);await isolation()
+ })
+ await check('23 wrong-game import preserves exact bytes, exports readable envelope, corrupt raw protection backup',async()=>{
+  await go('lights');const before=await raw('lights');await page.locator('input[aria-label="选择小游戏存档文件"]').setInputFiles({name:'wrong.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,game:'sudoku',updatedAt:new Date().toISOString(),state:p.createLights(2)}))});assert.equal(await raw('lights'),before);assert.match(await page.locator('.arcade-save-error').textContent(),/不是当前游戏/)
+  const download=page.waitForEvent('download');await button('导出存档').click();await(await download).saveAs(resolve('test-results/arcade-60-lights-export.json'));assert.deepEqual(JSON.parse(readFileSync('test-results/arcade-60-lights-export.json','utf8')).state,await state('lights'))
+  await page.evaluate(k=>localStorage.setItem(k,'{broken:original-retained'),key('lights'));await page.reload();await ready('lights');assert.equal(await raw('lights'),'{broken:original-retained');await page.locator('.lights-grid button').nth(0).click();assert.equal(await raw('lights'),'{broken:original-retained');const original=page.waitForEvent('download');await button('下载原始存档').click();await(await original).saveAs(resolve('test-results/arcade-60-corrupt-original.json'));assert.equal(readFileSync('test-results/arcade-60-corrupt-original.json','utf8'),'{broken:original-retained');await button('重新开始').click();assert.equal(await page.evaluate(k=>localStorage.getItem(k+'-backup'),key('lights')),'{broken:original-retained');assert.equal(JSON.parse(await raw('lights')).game,'lights');await persist('lights');await isolation()
+ })
+ await check('24 all fourteen game geometries at 390px after actions, phone screenshots and healthy ten seconds',async()=>{
+  await page.setViewportSize({width:390,height:844});for(const id of ids){await go(id);await fit();const controls=await page.locator('.arcade-save-row button').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().height));assert.ok(controls.every(h=>h>=36));if(id==='xiangqi'||id==='guandan')await page.screenshot({path:`test-results/arcade-60-${id}-phone.png`,fullPage:true})}
+  await go('lobby');await fit();await page.screenshot({path:'test-results/arcade-60-lobby-phone.png',fullPage:true});await go('2048');await page.waitForTimeout(10000);assert.equal(await page.locator('[data-arcade-game="2048"]').count(),1);assert.equal(await page.locator('.startup-recovery').count(),0);await isolation();assert.deepEqual(errors,[])
+ })
+ await check('25 manager lobby and default survival route preserve nickname on leaving for lobby',async()=>{
+  const other=await browser.newContext({viewport:{width:1100,height:900}}),route=await other.newPage();route.setDefaultTimeout(15000)
+  try{await route.goto(`${origin}/play`);await route.locator('[data-game-status]').waitFor();await route.getByRole('textbox',{name:'玩家昵称'}).fill('独立验收昵称');await route.getByRole('button',{name:'游戏大厅',exact:true}).click();await route.locator('.arcade-lobby').waitFor();assert.equal(await route.locator('[data-game-card]').count(),15);const saved=await route.evaluate(()=>JSON.parse(localStorage.getItem(`courtside-survival-slot-${localStorage.getItem('courtside-survival-active-slot-v1')||'1'}-v1`)));assert.equal(saved.playerName,'独立验收昵称');await route.goto(`${origin}/web?section=play&game=lobby`);await route.locator('.arcade-lobby').waitFor();assert.equal(await route.locator('[data-game-card]').count(),15);await route.locator('[data-game-card="lights"] button').click();await route.locator('[data-arcade-game="lights"] .lights-grid').waitFor();assert.equal(new URL(route.url()).searchParams.get('section'),'play');await route.locator('.lights-grid button').nth(12).click();assert.equal(await route.evaluate(()=>JSON.parse(localStorage.getItem('courtside-arcade-lights-v1')).state.moves),1);await route.reload();await route.locator('.lights-grid').waitFor();assert.equal(await route.evaluate(()=>JSON.parse(localStorage.getItem('courtside-arcade-lights-v1')).state.moves),1)}finally{await other.close()}
+ })
+ await check('26 failed backup write with writable game key leaves reset unchanged and export available',async()=>{
+  await go('lights');await fixture('lights',p.createLights(814));const before=await raw('lights');
+  await page.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreBackupInjection=()=>Storage.prototype.setItem=original;Storage.prototype.setItem=function(key,value){if(key===k+'-backup')throw new DOMException('isolated backup write refusal','QuotaExceededError');return original.call(this,key,value)}},key('lights'))
+  try{await button('重新开始').click();assert.equal(await raw('lights'),before);assert.match(await page.locator('.arcade-save-error').textContent(),/备份未成功|备份|旧档/);const wait=page.waitForEvent('download');await button('导出存档').click();await(await wait).saveAs(resolve('test-results/arcade-60-backup-refusal-export.json'));assert.deepEqual(JSON.parse(readFileSync('test-results/arcade-60-backup-refusal-export.json','utf8')).state,JSON.parse(before).state);assert.equal(await raw('lights'),before)}finally{await page.evaluate(()=>window.__restoreBackupInjection())}
+  await isolation()
+ })
+ await check('27 go whole-group dead marking, mutual confirmation, undo and durable score preserve original stones',async()=>{
+  await go('go');await fixture('go',b.createStoneGame('go'));for(const i of [0,80,1,79])await boardClick(i);const originalBoard=(await state('go')).board;await button('停一手').click();await button('停一手').click();assert.equal((await state('go')).finished,true);await boardClick(0);assert.deepEqual((await state('go')).dead,[0,1]);assert.equal(await page.locator('.stone-cell.dead').count(),2);await button('双方确认结果').click();assert.equal((await state('go')).settled,true);assert.match(await page.getByRole('status').first().textContent(),/已确认/);assert.deepEqual((await state('go')).board,originalBoard)
+  await button('悔棋').click();assert.equal((await state('go')).settled,false);assert.deepEqual((await state('go')).dead,[0,1]);await button('双方确认结果').click();await persist('go');const saved=await raw('go');assert.equal((await state('go')).settled,true);assert.deepEqual((await state('go')).dead,[0,1]);assert.deepEqual((await state('go')).board,originalBoard);assert.equal(await button('悔棋').isDisabled(),true);await boardClick(0);assert.equal(await raw('go'),saved);assert.equal(await button('双方确认结果').count(),0);assert.equal(await button('清除死子标记').count(),0)
+  const wait=page.waitForEvent('download');await button('导出存档').click();await(await wait).saveAs(resolve('test-results/arcade-60-go-confirmed-export.json'));const exported=JSON.parse(readFileSync('test-results/arcade-60-go-confirmed-export.json','utf8')).state;assert.equal(exported.settled,true);assert.deepEqual(exported.dead,[0,1]);assert.deepEqual(exported.board,originalBoard);await isolation();await fit()
+ })
+ console.log(`ARCADE RESULT ${passed.length}/27 groups passed`)
+}catch(e){failures.push({check:current,message:e.stack||String(e)});console.error('FAIL '+current+'\n'+(e.stack||e));await page.screenshot({path:'test-results/arcade-60-failure.png',fullPage:true}).catch(()=>{})}
+finally{writeFileSync('test-results/arcade-60-report.json',JSON.stringify({total:27,passed,failures,runtimeErrors:errors,protectedOps:allOps},null,2));await context.close();await browser.close()}
+if(failures.length||errors.length)process.exitCode=1

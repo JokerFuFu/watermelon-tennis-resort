@@ -1,0 +1,411 @@
+/* The desktop edition has its own layout at every browser viewport width. */
+.desktop-web {
+  min-width: 1100px;
+  width: 100%;
+  background: #f5f6f3;
+}
+
+body:has(.desktop-web) { overflow-x: auto; }
+.desktop-web .sidebar,
+.desktop-web .sidebar-overlay,
+.desktop-web .topbar,
+.desktop-web .project-heading,
+.desktop-web .page-footer,
+.desktop-web .fullscreen-actions,
+.desktop-web .expand-button { display: none; }
+.desktop-web .main-shell {
+  margin-left: 0;
+  width: 100%;
+  min-width: 1100px;
+  height: auto;
+}
+.desktop-web .main-content {
+  padding: 24px 32px;
+  max-width: none;
+  margin: 0;
+}
+
+.desktop-web .desktop-header {
+  height: 72px;
+  display: grid;
+  grid-template-columns: 140px minmax(120px, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  border-bottom: 1px solid #e0e7d8;
+  background: #fff;
+  position: relative;
+  z-index: 35;
+}
+.desktop-web .desktop-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.desktop-web .desktop-brand .brand-mark { width: 28px; height: 28px; }
+.desktop-web .desktop-brand strong {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .35px;
+}
+.desktop-web .desktop-project {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding-left: 14px;
+  border-left: 1px solid #e6eadd;
+  position: relative;
+}
+.desktop-web .desktop-project > div:not(.dropdown) { display: flex; align-items: center; gap: 5px; min-width: 0; width: 100%; }
+.desktop-web .desktop-project > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #77836f;
+  white-space: nowrap;
+}
+.desktop-web .desktop-project > span small { margin: 0 0 0 6px; gap: 3px; }
+.desktop-web .desktop-project h1 {
+  font-size: 15px;
+  font-weight: 600;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  min-width: 0;
+}
+.desktop-web .desktop-project > p,
+.desktop-web .desktop-project > small,
+.desktop-web .desktop-project > .desktop-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #77836f;
+  margin-top: 3px;
+}
+.desktop-web .desktop-project .icon-button { width: 26px; flex: none; }
+.desktop-web .desktop-project .desktop-project-dropdown { left: 14px; top: calc(100% + 9px); width: 260px; }
+.desktop-web .desktop-project-dropdown button > span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.desktop-web .desktop-nav { display: flex; align-items: center; gap: 3px; }
+.desktop-web .desktop-nav button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 11px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #78846d;
+  border-radius: 6px;
+}
+.desktop-web .desktop-nav button:hover { background: #f4f6ef; }
+.desktop-web .desktop-nav button.active {
+  color: #45673c;
+  background: #edf3e6;
+  font-weight: 600;
+}
+.desktop-web .desktop-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.desktop-web .desktop-header-actions .icon-button { width: 29px; height: 34px; }
+.desktop-web .desktop-edition-tag {
+  font-size: 10px;
+  line-height: 21px;
+  padding: 0 6px;
+  border-radius: 4px;
+  color: #6a8157;
+  background: #f0f5e8;
+}
+.desktop-web .desktop-mobile-link {
+  font-size: 11px;
+  color: #748364;
+  padding: 7px 5px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+}
+.desktop-web .desktop-mobile-link:hover { background: #f3f6ed; }
+.desktop-web .desktop-action-rule { width: 1px; height: 20px; background: #e5eadd; margin: 0 3px; }
+.desktop-web .desktop-save-status { color: #83956e; display: inline-flex; align-items: center; }
+.desktop-web .button { font-size: 12px; height: 36px; padding: 0 12px; gap: 6px; }
+.desktop-web .desktop-header-actions .button { height: 34px; padding: 0 10px; }
+.desktop-web .export-button svg:last-child { display: block; }
+.desktop-web .desktop-header-actions .dropdown { right: 0; }
+.desktop-web .dropdown button { font-size: 12px; }
+
+/* Keep the scene and its properties adjacent, including in a narrow app panel. */
+.desktop-web .studio-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; }
+.desktop-web.canvas-expanded .main-shell { height: 100dvh; }
+.desktop-web.canvas-expanded .main-content { padding: 0; }
+.desktop-web.canvas-expanded .studio-grid {
+  height: calc(100dvh - 72px);
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 0;
+  position: relative;
+  padding: 0;
+  width: 100%;
+}
+.desktop-web.canvas-expanded .studio-panel {
+  height: 100%;
+  min-height: 0;
+  border-radius: 0;
+  border: 0;
+  overflow: hidden;
+}
+.desktop-web .studio-top,
+.desktop-web.canvas-expanded .studio-top { height: 54px; padding: 0 22px; gap: 12px; }
+.desktop-web .panel-heading,
+.desktop-web.canvas-expanded .panel-heading { gap: 8px; }
+.desktop-web .panel-heading h2,
+.desktop-web.canvas-expanded .panel-heading h2 { font-size: 14px; max-width: 350px; }
+.desktop-web .panel-heading > .green-square { display: grid; }
+.desktop-web .view-switch { padding: 3px; }
+.desktop-web .view-switch button,
+.desktop-web.canvas-expanded .view-switch button { font-size: 12px; padding: 6px 9px; gap: 5px; }
+.desktop-web .view-switch button > svg { display: block; }
+.desktop-web .canvas-area { min-height: 430px; height: 430px; }
+.desktop-web.canvas-expanded .canvas-area { height: 0; min-height: 0; flex: 1; }
+.desktop-web .canvas-caption,
+.desktop-web.canvas-expanded .canvas-caption { left: 24px; top: 22px; }
+.desktop-web .canvas-caption strong { font-size: 12px; color: #6f8062; }
+.desktop-web .canvas-caption small { font-size: 11px; color: #869578; }
+.desktop-web .canvas-options,
+.desktop-web.canvas-expanded .canvas-options { right: 22px; top: 20px; }
+.desktop-web .canvas-options button { width: 32px; height: 32px; }
+.desktop-web .canvas-options button > svg { width: 16px; }
+.desktop-web .canvas-toolbar,
+.desktop-web.canvas-expanded .canvas-toolbar { left: 50%; bottom: 18px; padding: 4px; gap: 3px; }
+.desktop-web .canvas-toolbar button { width: 32px; height: 30px; }
+.desktop-web .canvas-hint,
+.desktop-web.canvas-expanded .canvas-hint { display: block; font-size: 11px; left: 65px; bottom: 24px; }
+.desktop-web .zoom-control { right: 20px; bottom: 18px; height: 36px; padding: 3px; }
+.desktop-web .zoom-control button { width: 24px; }
+.desktop-web .zoom-control .zoom-value { width: 41px; font-size: 11px; }
+.desktop-web .compass { left: 25px; bottom: 16px; width: 23px; }
+.desktop-web .compass > span { font-size: 10px; }
+.desktop-web .compass svg { width: 23px; height: 27px; }
+.desktop-web .canvas-footer,
+.desktop-web.canvas-expanded .canvas-footer { height: 36px; padding: 0 23px; }
+.desktop-web .legend,
+.desktop-web.canvas-expanded .studio-panel .legend { gap: 20px; }
+.desktop-web .legend > span,
+.desktop-web .scale-label { font-size: 11px; color: #7a8c6b; }
+.desktop-web .facility-palette,
+.desktop-web.canvas-expanded .facility-palette { padding: 12px 22px 14px; background: #fff; }
+.desktop-web .palette-title,
+.desktop-web.canvas-expanded .palette-title { margin-bottom: 9px; }
+.desktop-web .palette-title h3 { font-size: 12px; }
+.desktop-web .palette-title > span { font-size: 11px; color: #8d9980; }
+.desktop-web .palette-items,
+.desktop-web.canvas-expanded .palette-items { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.desktop-web .palette-item,
+.desktop-web.canvas-expanded .palette-item { height: 64px; font-size: 12px; }
+.desktop-web .facility-mini { transform: none; }
+
+.desktop-web .properties-panel,
+.desktop-web.canvas-expanded .properties-panel {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: none;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  border-top: 0;
+  border-left: 1px solid #e0e7d6;
+}
+.desktop-web.canvas-expanded .properties-panel { border-radius: 0; }
+.desktop-web .property-tabs { height: 54px; padding: 0 22px; gap: 25px; }
+.desktop-web .property-tabs button { height: 54px; font-size: 13px; }
+.desktop-web .properties-panel .selected-heading { padding: 22px 22px 19px; }
+.desktop-web .selected-heading small { font-size: 11px; color: #879578; }
+.desktop-web .selected-heading h3 { font-size: 15px; }
+.desktop-web .property-form { display: block; padding: 0 22px !important; }
+.desktop-web .field-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.desktop-web .number-field > span,
+.desktop-web .text-field > span,
+.desktop-web .stepper-field > span,
+.desktop-web .surface-field > span { font-size: 12px; color: #718266; }
+.desktop-web .text-field input,
+.desktop-web .number-field input { height: 36px; font-size: 14px; color: #506545; }
+.desktop-web .input-shell { height: 36px; }
+.desktop-web .input-unit { font-size: 11px; line-height: 36px; }
+.desktop-web .properties-panel .field-section-heading { font-size: 12px; margin: 18px 0 11px; }
+.desktop-web .field-section-heading > span { font-size: 11px; }
+.desktop-web .position-toggle { font-size: 12px; }
+.desktop-web .property-form > .number-field { margin-top: 14px; }
+.desktop-web .stepper-field { flex-direction: row; align-items: center; margin: 16px 0 12px; gap: 8px; }
+.desktop-web .stepper { height: 34px; width: 122px; }
+.desktop-web .stepper > span { font-size: 13px; }
+.desktop-web .stepper small { font-size: 11px; }
+.desktop-web .rotate-button { font-size: 11px; padding: 5px 7px; }
+.desktop-web .properties-panel .property-divider { margin: 18px 0 15px; }
+.desktop-web .surface-field > span { margin: 17px 0 9px; }
+.desktop-web .surface-options button { height: 33px; font-size: 12px; }
+.desktop-web .facility-totals { margin-top: 16px; padding: 13px 12px; }
+.desktop-web .facility-totals span { font-size: 12px; color: #7e8c70; }
+.desktop-web .facility-totals strong { font-size: 14px; }
+.desktop-web .facility-totals small { font-size: 11px; }
+.desktop-web .properties-panel .property-actions { padding: 18px 22px 12px; }
+.desktop-web .property-actions .button { font-size: 12px; height: 33px; padding: 0 11px; }
+.desktop-web .delete-button { font-size: 12px; }
+.desktop-web .property-note,
+.desktop-web.canvas-expanded .property-note { display: flex; margin: auto 22px 20px; padding-top: 15px; }
+.desktop-web .property-note p { font-size: 11px; color: #879676; }
+.desktop-web .site-indicators { margin: 20px 0; }
+.desktop-web .site-indicators > div,
+.desktop-web .site-indicators strong { font-size: 12px; }
+.desktop-web .checks-clear,
+.desktop-web .warning-list li,
+.desktop-web .warning-facilities button,
+.desktop-web .subtle-explanation { font-size: 12px; line-height: 1.8; }
+.desktop-web .subtle-explanation { margin: 15px 0 20px; }
+.desktop-web .empty-properties h3 { font-size: 15px; }
+.desktop-web .empty-properties p { font-size: 13px; }
+.desktop-web.canvas-expanded .storage-warning { right: 330px; }
+
+/* All secondary routes use the same desktop scale and horizontal composition. */
+.desktop-web .metric-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 20px; }
+.desktop-web .overview .metric-strip { margin-top: 0; }
+.desktop-web .metric-block { min-height: 110px; padding: 22px; gap: 14px; border-top: 0; }
+.desktop-web .metric-icon { display: grid; width: 38px; height: 38px; }
+.desktop-web .metric-block > div > span { font-size: 12px; }
+.desktop-web .metric-block strong { font-size: 28px; }
+.desktop-web .metric-block strong small { font-size: 11px; }
+.desktop-web .metric-block + .metric-block:before { display: block; }
+.desktop-web .metric-detail { display: block; font-size: 10px; }
+.desktop-web .overview-grid { grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; }
+.desktop-web .overview-canvas { height: 490px; }
+.desktop-web .section-heading { padding: 25px 28px; align-items: center; flex-wrap: nowrap; gap: 20px; }
+.desktop-web .section-heading h2 { font-size: 18px; line-height: 1.5; }
+.desktop-web .section-heading p { font-size: 13px; line-height: 1.8; color: #859277; }
+.desktop-web .overview-summary { padding: 28px; }
+.desktop-web .overview-summary h2 { font-size: 17px; }
+.desktop-web .overview-summary > p,
+.desktop-web .summary-row { font-size: 13px; }
+.desktop-web .overview-check { padding: 22px 28px; flex-wrap: nowrap; }
+.desktop-web .overview-check > .button { margin-left: auto; }
+.desktop-web .overview-check strong { font-size: 14px; }
+.desktop-web .overview-check p { font-size: 12px; }
+.desktop-web .table-wrap table { font-size: 13px; }
+.desktop-web .table-wrap th,
+.desktop-web .table-wrap td { padding: 18px 24px; }
+.desktop-web .table-facility strong,
+.desktop-web .budget-table td:last-child strong { font-size: 13px; }
+.desktop-web .estimate-note { padding: 22px 28px; }
+.desktop-web .estimate-note p { font-size: 12px; color: #859677; }
+.desktop-web .budget-summary { display: flex; gap: 48px; padding: 32px; }
+.desktop-web .budget-summary h2 { font-size: 44px; }
+.desktop-web .budget-summary h2 small,
+.desktop-web .budget-summary p,
+.desktop-web .budget-label { font-size: 13px; }
+.desktop-web .cost-donut { width: 154px; height: 154px; margin: 0; align-self: auto; }
+.desktop-web .cost-donut > div { width: 118px; height: 118px; }
+.desktop-web .cost-donut > div > svg { display: block; }
+.desktop-web .cost-donut strong { font-size: 27px; }
+.desktop-web .cost-donut span { font-size: 12px; }
+.desktop-web .cost-legend { display: flex; flex-direction: column; min-width: 225px; border-top: 0; padding-top: 0; gap: 15px; }
+.desktop-web .cost-legend > div,
+.desktop-web .cost-legend strong { font-size: 12px; }
+.desktop-web .cost-legend strong { min-width: 80px; }
+.desktop-web .budget-price input { font-size: 14px; height: 35px; width: 100px; }
+.desktop-web .budget-price > span,
+.desktop-web .budget-price small { font-size: 12px; }
+.desktop-web .budget-page .section-heading > span { display: block; }
+
+.desktop-web .rp-page .rp-heading { padding: 27px 28px; align-items: center; flex-wrap: nowrap; }
+.desktop-web .rp-heading-actions { margin: 0; flex-wrap: nowrap; gap: 10px; }
+.desktop-web .rp-heading-actions .button { font-size: 12px; height: 36px; margin-top: 0; }
+.desktop-web .rp-page .rp-heading h2 { font-size: 20px; }
+.desktop-web .rp-page .rp-heading p { font-size: 13px; }
+.desktop-web .rp-page .room-summary.rp-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 24px 28px 28px; }
+.desktop-web .rp-page .rp-summary > div { display: flex; flex-direction: column; align-items: flex-start; padding: 22px !important; }
+.desktop-web .rp-page .rp-summary > div + div { border-left: 1px solid #e4e9db; border-top: 0; }
+.desktop-web .rp-page .rp-summary > div > .rp-kpi-icon { display: flex; }
+.desktop-web .rp-page .rp-summary > div > span:not(.rp-kpi-icon) { font-size: 12px; }
+.desktop-web .rp-page .rp-summary > div > strong { font-size: 30px; margin-top: 9px; }
+.desktop-web .rp-page .rp-summary > div > strong small { font-size: 12px; margin-left: 7px; }
+.desktop-web .rp-summary p { font-size: 11px; margin-top: 7px; }
+.desktop-web .rp-section-label { margin-left: 28px; margin-right: 28px; }
+.desktop-web .rp-section-label h3 { font-size: 14px; }
+.desktop-web .rp-section-label > span { font-size: 12px; }
+.desktop-web .rp-type-overview { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 28px; gap: 16px; }
+.desktop-web .rp-type-card { display: block; padding: 20px; }
+.desktop-web .rp-type-name { font-size: 13px; }
+.desktop-web .rp-area-tag { font-size: 11px; }
+.desktop-web .rp-type-content { display: flex; margin: 12px 0 10px; }
+.desktop-web .rp-type-content > div { display: block; margin: 0; }
+.desktop-web .rp-type-content strong { font-size: 30px; }
+.desktop-web .rp-type-content strong small,
+.desktop-web .rp-type-content p { font-size: 11px; }
+.desktop-web .rp-type-content p { margin-top: 5px; }
+.desktop-web .rp-room-sketch { width: 125px; max-width: 48%; height: 85px; }
+.desktop-web .rp-type-description { font-size: 12px; border-top: 1px solid #eff2e9; padding-top: 12px; }
+.desktop-web .rp-building-label { margin-top: 32px; }
+.desktop-web .rp-building-label h3 span { font-size: 11px; }
+.desktop-web .rp-hotels { margin: 0 28px 28px; gap: 20px; }
+.desktop-web .rp-hotel-heading { padding: 20px 24px; flex-wrap: nowrap; align-items: center; }
+.desktop-web .rp-hotel-title h3 { font-size: 15px; }
+.desktop-web .rp-capacity-status { font-size: 12px; margin-left: 0; }
+.desktop-web .rp-building-controls { grid-template-columns: 1.1fr 1fr 1fr 1.2fr; gap: 24px; padding: 20px 24px; }
+.desktop-web .rp-stat > span,
+.desktop-web .rp-control > span { font-size: 12px; margin-bottom: 9px; }
+.desktop-web .rp-stat > strong { font-size: 18px; }
+.desktop-web .rp-stat small,
+.desktop-web .rp-control small { font-size: 12px; }
+.desktop-web .rp-page .rp-control .table-number { width: 80px; height: 36px; font-size: 14px; }
+.desktop-web .rp-mix-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding: 24px; }
+.desktop-web .rp-mix-input { display: block; }
+.desktop-web .rp-mix-title { font-size: 13px; margin-bottom: 11px; gap: 6px; }
+.desktop-web .rp-mix-title > small { font-size: 11px; margin-left: auto; flex-basis: auto; }
+.desktop-web .rp-mix-value { padding: 12px; gap: 8px; }
+.desktop-web .rp-mix-value input { width: 65px; font-size: 20px; }
+.desktop-web .rp-mix-value > span,
+.desktop-web .rp-mix-value > small { font-size: 12px; }
+.desktop-web .rp-area-program { padding: 0 24px 24px; }
+.desktop-web .rp-area-heading,
+.desktop-web .rp-area-heading > span:last-child,
+.desktop-web .rp-area-heading strong { font-size: 12px; }
+.desktop-web .rp-allocation-bar { height: 12px; }
+.desktop-web .rp-allocation-legend { flex-direction: row; align-items: center; gap: 15px; }
+.desktop-web .rp-allocation-legend > span,
+.desktop-web .rp-allocation-legend strong { font-size: 12px; }
+.desktop-web .rp-shortage-message { font-size: 12px; padding: 12px 14px; }
+.desktop-web .rp-page .room-note.rp-note { padding: 23px 28px; gap: 12px; }
+.desktop-web .rp-note strong { font-size: 13px; }
+.desktop-web .rp-page .rp-note p { font-size: 12px; max-width: 1100px; }
+
+@media (max-height: 760px) {
+  .desktop-web.canvas-expanded .facility-palette { padding-top: 10px; padding-bottom: 10px; }
+  .desktop-web.canvas-expanded .palette-item { height: 55px; gap: 4px; }
+  .desktop-web.canvas-expanded .palette-title { margin-bottom: 7px; }
+  .desktop-web.canvas-expanded .properties-panel .selected-heading { padding-top: 15px; padding-bottom: 14px; }
+}
+
+@media (max-width: 1250px) {
+  .desktop-web .desktop-header { height:112px; grid-template-columns:112px minmax(130px,1fr) auto; grid-template-rows:54px 36px; gap:4px 12px; padding:9px 16px; }
+  .desktop-web .desktop-brand { grid-row:1;grid-column:1; }
+  .desktop-web .desktop-project { grid-row:1;grid-column:2; }
+  .desktop-web .desktop-header-actions { grid-row:1;grid-column:3; }
+  .desktop-web .desktop-nav { grid-row:2;grid-column:1/-1;justify-content:center; }
+  .desktop-web.canvas-expanded .studio-grid { height:calc(100dvh - 112px); }
+  .desktop-web .desktop-nav button { padding: 0 6px; gap: 4px; }
+  .desktop-web .desktop-header-actions { gap: 4px; }
+  .desktop-web .desktop-edition-tag,
+  .desktop-web .desktop-project > span small { display: none; }
+}
+
+/* Keep project and export menus above the stage, below dialogs. */
+.desktop-web.canvas-expanded .studio-grid{z-index:0}
