@@ -1,0 +1,35 @@
+{
+  "name": "factor-quest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "因数探险家：顺序闯关、金币钻石与道具商店的数学网页游戏。",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5174",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5174",
+    "start": "node scripts/server.mjs",
+    "test": "tsx --test src/factors/engine.test.ts",
+    "test:server": "node --test scripts/server.test.mjs",
+    "test:browser": "node scripts/verify-game.mjs",
+    "package": "node scripts/package-release.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.50.0",
+    "tsx": "^4.19.2",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

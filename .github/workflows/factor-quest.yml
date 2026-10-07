@@ -1,0 +1,48 @@
+name: Factor Quest Windows and Mac
+on:
+  push:
+    paths: ['factor-quest/**', '.github/workflows/factor-quest.yml']
+  pull_request:
+    paths: ['factor-quest/**', '.github/workflows/factor-quest.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    working-directory: factor-quest
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: factor-quest/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:server
+      - run: npm run build
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: factor-quest-${{ matrix.os }}
+          path: factor-quest/release/*.zip
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: factor-quest/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
