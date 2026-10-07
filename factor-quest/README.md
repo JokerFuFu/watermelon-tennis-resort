@@ -2,7 +2,7 @@
 
 一个寻找全部正因数的中文数学游戏。顺序闯关、金币钻石奖励、道具商店和随机挑战都在浏览器内完成。
 
-- [直接在线玩](https://factor-quest-fu.cool-book-0149.chatgpt.site)
+- [直接在线玩](https://factor-quest-fu.jokerfu.chatgpt.site)
 - [下载 Windows / Mac 通用运行包](https://github.com/JokerFuFu/watermelon-tennis-resort/releases/tag/factor-quest-v1.0.0)
 
 ## 直接玩

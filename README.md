@@ -324,6 +324,6 @@ npm run test:startup
 
 ## 因数游戏独立跨平台版
 
-- [在线直接玩因数探险家](https://factor-quest-fu.cool-book-0149.chatgpt.site)：Windows、Mac、手机浏览器均可直接打开，无需启动本机服务。
+- [在线直接玩因数探险家](https://factor-quest-fu.jokerfu.chatgpt.site)：Windows、Mac、手机浏览器均可直接打开，无需启动本机服务。
 - [独立源码与运行说明](factor-quest/README.md)：纯浏览器业务逻辑，另提供 Node.js 22 的 Windows/Mac 共用静态服务和启动器。
 - [下载独立因数游戏运行包](https://github.com/JokerFuFu/watermelon-tennis-resort/releases/tag/factor-quest-v1.0.0)：下载后可本机运行，游戏存档属于当前浏览器和网址。
